@@ -55,6 +55,6 @@ def decrypt(data: bytes):
         if cipher.decrypt(data[:32]) == bytes(16):
             print(f"found key 0x{hex(key)[2:].zfill(4)}")
             data = cipher.decrypt(data[16:])
-            return data
+            return data[16:]
             
     raise ValueError("key not found :(")
