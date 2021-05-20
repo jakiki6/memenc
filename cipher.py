@@ -31,9 +31,24 @@ def encrypt(data: bytes):
     cipher = AESCipher(bytes(14) + bytes([random.randint(0, 255), random.randint(0, 255)]))
     data = b"\x13\x37\x69\x69" + data
 
-    return cipher.encrypt(data)
+    data = bytearray(b"\x69" + cipher.encrypt(data))
+
+    xor = random.randint(0, 256)
+    for i in range(0, len(data)):
+        data[i] ^= xor
+
+    return data
 
 def decrypt(data: bytes):
+    for xor in range(0, 256):
+        _data = bytearray(data)
+        for i in range(0, len(_data)):
+            _data[i] ^= xor
+        if _data[0] == 0x69:
+            print(f"found xor 0x{hex(xor)[2:].zfill(2)}")
+            data = bytes(_data[1:])
+            break
+
     for key in range(0, 65536):
         cipher = AESCipher(bytes(14) + bytes([key >> 8, key & 0xff]))
         _data = cipher.decrypt(data)
