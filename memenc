@@ -1,0 +1,37 @@
+#!/bin/env python3
+import argparse
+import cipher
+
+parser = argparse.ArgumentParser(description='meme encryptor/decryptor: a countermeasure against article 13')
+parser.add_argument("input", nargs="?", type=str)
+parser.add_argument("--output", "-o", type=str, default=None)
+parser.add_argument("--encrypt", "-e", help="encrypt", action="store_true")
+parser.add_argument("--decrypt", "-d", help="decrypt", action="store_true")
+args = parser.parse_args()
+
+if args.input == None:
+    parser.print_help()
+    exit(1)
+
+if args.encrypt == args.decrypt:
+	print("Please specify --encrypt or --decrypt")
+	exit(1)
+
+if args.output == None:
+    if args.encrypt:
+    	args.output = args.input + ".enc"
+    else:
+        if ".enc" in args.input:
+            args.output = args.input[:-4]
+        else:
+            args.output = args.input + ".dec"
+
+
+with open(args.input, "rb") as infile:
+	with open(args.output, "wb") as outfile:
+		content = infile.read()
+		if args.encrypt:
+			content = cipher.encrypt(content)
+		else:
+			content = cipher.decrypt(content)
+		outfile.write(content)
